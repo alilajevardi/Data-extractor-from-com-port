@@ -10,9 +10,10 @@ Public Class Form1
     Dim myPort As Array
     Delegate Sub SetTextCallback(ByVal [text] As String)
 
-    Dim sw As StreamWriter
-    Dim fs As FileStream = Nothing
+    Dim sw As StreamWriter = Nothing
+    'Dim fs As FileStream = Nothing
     Dim sav As Integer = 0
+
 
     Private Sub Form1_KeyUp(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyUp
         If (e.Modifiers = Keys.Control) Then
@@ -42,7 +43,6 @@ Public Class Form1
 
         Me.KeyPreview = True
 
-
     End Sub
     '------------------------------------------------
     '------------------------------------------------
@@ -54,7 +54,7 @@ Public Class Form1
         Button1.Enabled = False
         Button2.Enabled = True
         Button3.Enabled = True
-        Button4.Enabled = True
+        closeBtn.Enabled = True
 
     End Sub
     '------------------------------------------------
@@ -104,11 +104,16 @@ Public Class Form1
 
     End Sub
 
-    Private Sub Button4_Click(sender As System.Object, e As System.EventArgs) Handles Button4.Click
+    Private Sub Button4_Click(sender As System.Object, e As System.EventArgs) Handles closeBtn.Click
         SerialPort1.Close()
         Button1.Enabled = True
         Button2.Enabled = False
-        Button4.Enabled = False
+        closeBtn.Enabled = False
+        If (sw IsNot Nothing) Then
+            sw.Close()
+        End If
+
+
         End
     End Sub
 
@@ -125,6 +130,7 @@ Public Class Form1
         End If
         If sav = 1 Then
             sw.WriteLine("Time" & "," & DateAndTime.TimeString.ToString & "," & [text].ToString)
+            sw.Flush()
         End If
     End Sub
 
@@ -144,35 +150,62 @@ Public Class Form1
    
     Private Sub Button5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button5.Click
 
+
+
+        Dim saveFileDialog1 As New SaveFileDialog()
         Dim Path1 As String
-        Path1 = My.Computer.FileSystem.SpecialDirectories.MyDocuments.ToString
+        Dim myStream As Stream
 
-        Dim strFile As String = Path1 & "\TempData_" & ".csv"
+        Path1 = Directory.GetCurrentDirectory().ToString
 
 
-        If (Not File.Exists(strFile)) Then
-            Try
-                fs = File.Create(strFile)
-                sw = File.AppendText(strFile)
-                sw.WriteLine("Start temp Log")
 
-            Catch ex As Exception
-                MsgBox(strFile)
-                MsgBox(ex.ToString)
-                End
-            End Try
-        Else
-            sw = File.AppendText(strFile)
-            sw.WriteLine("Time" & "," & "Date" & "," & "Data")
+        saveFileDialog1.Filter = "CSV Files (*.csv)|*.csv"
+        saveFileDialog1.InitialDirectory = Path1
+        saveFileDialog1.RestoreDirectory = True
+        saveFileDialog1.FileName = System.DateTime.Now.ToString("yyyyMMdd_HHmmss") & "_T_data"
 
+        If saveFileDialog1.ShowDialog = Windows.Forms.DialogResult.OK Then
+            myStream = saveFileDialog1.OpenFile()
+            myStream.Close()
+            Path1 = saveFileDialog1.FileName
+            sw = My.Computer.FileSystem.OpenTextFileWriter(Path1, True)
         End If
+        sw.WriteLine("@@@ Start to log temperature @@@")
+        sw.WriteLine("Time" & "," & "Date" & "," & "Data")
+        sw.Flush()
+
+
+        'Dim strFile As String = saveFileDialog1.FileName.ToString 'Path1 & "\T_data" & ".csv"
+        'sw = File.AppendText(strFile)
+        'sw.WriteLine("Time" & "," & "Date" & "," & "Data" + vbCrLf)
+
+        'If (Not File.Exists(strFile)) Then
+        '    Try
+        '        fs = File.Create(strFile)
+        '        sw = File.AppendText(strFile)
+        '        sw.WriteLine("Start to log temperature")
+
+        '    Catch ex As Exception
+        '        MsgBox(strFile)
+        '        MsgBox(ex.ToString)
+        '        End
+        '    End Try
+        'Else
+        '    sw = File.AppendText(strFile)
+        '    sw.WriteLine("Time" & "," & "Date" & "," & "Data")
+
+        'End If
         sav = 1
+
+
+
 
     End Sub
 
 
 
-   
+
 
     Private Sub ComboBox4_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles ComboBox4.SelectionChangeCommitted
         Dim description As String
@@ -269,5 +302,17 @@ Public Class Form1
 
     Private Sub PictureBox1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
 
+    End Sub
+
+    Private Sub PictureBox2_Click(sender As Object, e As EventArgs) Handles PictureBox2.Click
+
+    End Sub
+
+
+
+    Private Sub Form1_Closed(sender As Object, e As EventArgs) Handles Me.Closed
+        If (sw IsNot Nothing) Then
+            sw.Close()
+        End If
     End Sub
 End Class
