@@ -1,6 +1,6 @@
 # Data-extractor-from-com-port
 
-The software records real-time temperature data from fluoroptic sensor of Luxtron device. It can also control the device through Action and Parameter commands. The explanation of each command is displayed in bottom description panel.
+The software records real-time temperature data from fluoroptic sensor of Luxtron device. It can also control the device through Action and Parameter commands. The explanation of each command is displayed in the description textbox under Recieve panel.
 
 The sensor needs to be already connected to a com port (via serial to USB connector) before initialising the software.
 
