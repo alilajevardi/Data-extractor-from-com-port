@@ -18,3 +18,4 @@ The sensor needs to be already connected to a com port (via serial to USB connec
 
 # Summary Listing of Parameter Commands
 ![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/Parameter_Commands.png)
+
