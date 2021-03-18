@@ -11,6 +11,10 @@ The sensor needs to be already connected to a com port (via serial to USB connec
 
 ![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/Luxtron-812.png)
 
+
+Summary Listing of Action Commands
 ![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/Action_Commands.png)
 
+
+Summary Listing of Parameter Commands
 ![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/Parameter_Commands.png)
