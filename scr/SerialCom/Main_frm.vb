@@ -13,6 +13,7 @@ Public Class Main_frm
     Dim sw As StreamWriter = Nothing
     'Dim fs As FileStream = Nothing
     Dim sav As Integer = 0
+    Dim send_idx As Integer = -1
 
 
     Private Sub Main_frm_KeyUp(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyUp
@@ -38,73 +39,45 @@ Public Class Main_frm
 
         BudBox.Text = BudBox.Items.Item(0)
 
-        ActBtn.Enabled = False
-        ParamBtn.Enabled = False
+        'SavBtn.Enabled = False
+        SendBtn.Enabled = False
+        HistBox.Enabled = False
+
+        ActBox.Enabled = False
+        ParamBox.Enabled = False
 
         Me.KeyPreview = True
+
+        Me.RecTxt.Text = "Time | Channel#:,  T,  Unit" & vbCrLf
+
+        Me.DescTxt.ForeColor = Color.Red
+        Me.DescTxt.Text = "Select proper COM port and baud rate then click Intilisation button to start"
+
 
     End Sub
     '------------------------------------------------
     '------------------------------------------------
-    Private Sub Button1_Click(sender As System.Object, e As System.EventArgs) Handles InitBtn.Click
+    Private Sub InitBtn_Click(sender As System.Object, e As System.EventArgs) Handles InitBtn.Click
         SerialPort1.Close()
         SerialPort1.PortName = PortBox.Text
         SerialPort1.BaudRate = BudBox.Text
         SerialPort1.Open()
         InitBtn.Enabled = False
-        ActBtn.Enabled = True
-        ParamBtn.Enabled = True
+        'ActBtn.Enabled = True
+        'ParamBtn.Enabled = True
         closeBtn.Enabled = True
+        RecTxt.Enabled = True
+        ActBox.Enabled = True
+        ParamBox.Enabled = True
+
+        Me.DescTxt.ForeColor = SystemColors.WindowText
+        DescTxt.Text = ""
 
     End Sub
     '------------------------------------------------
-    Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ActBtn.Click
 
 
-
-        Dim Buffer(1) As Byte
-
-
-        'MsgBox(ComboBox3.SelectedIndex.ToString)
-        If ActBox.SelectedIndex > -1 Then
-            Select Case ActBox.SelectedItem.ToString
-                Case "CTRL+A"
-                    Buffer(0) = &H1
-                Case "CTRL+D"
-                    Buffer(0) = &H4
-                Case "CTRL+E"
-                    Buffer(0) = &H5
-                Case "CTRL+F"
-                    Buffer(0) = &H6
-                Case "CTRL+I"
-                    Buffer(0) = &H9
-                Case "CTRL+K"
-                    Buffer(0) = &HB
-                Case "CTRL+Q"
-                    Buffer(0) = &H11
-                Case "CTRL+R"
-                    Buffer(0) = &H12
-                Case "CTRL+T"
-                    Buffer(0) = &H14
-                Case "CTRL+S"
-                    Buffer(0) = &H13
-                Case "CTRL+X"
-                    Buffer(0) = &H18
-            End Select
-            SerialPort1.Write(Chr(Buffer(0)) + vbCr)
-            ActBox.SelectedIndex = -1
-        End If
-
-
-
-
-
-
-
-
-    End Sub
-
-    Private Sub Button4_Click(sender As System.Object, e As System.EventArgs) Handles closeBtn.Click
+    Private Sub closeBtn_Click(sender As System.Object, e As System.EventArgs) Handles closeBtn.Click
 
         If (sw IsNot Nothing) Then
             'Dim result As DialogResult = MessageBox.Show("Data have not been saved. Do you want to proceed?", "Warning", MessageBoxButtons.YesNo)
@@ -115,7 +88,7 @@ Public Class Main_frm
         End If
         SerialPort1.Close()
         InitBtn.Enabled = True
-        ActBtn.Enabled = False
+
         closeBtn.Enabled = False
         Me.Close()
 
@@ -134,8 +107,11 @@ Public Class Main_frm
         Else
             'Me.RecTxt.Text &= DateAndTime.TimeString.ToString & ":"
             strdata = [text].ToString
-            Me.RecTxt.Text &= strdata 'append text
-
+            'Me.RecTxt.Text &= strdata 'append text
+            Me.RecTxt.AppendText(DateAndTime.TimeString.ToString & " | " & strdata)
+            Me.RecTxt.SelectionStart = Me.RecTxt.Text.Length
+            Me.RecTxt.ScrollToCaret()
+            Me.RecTxt.Refresh()
 
         End If
 
@@ -144,7 +120,7 @@ Public Class Main_frm
                 strdata = strdata.Replace(" ", ",")
                 strdata = strdata.Replace(",,,", ",")
                 strdata = strdata.Replace(",,", ",")
-                sw.Write(DateAndTime.TimeString.ToString & " " & strdata)
+                sw.Write(DateAndTime.TimeString.ToString & ",| " & strdata)
                 sw.Flush()
             End If
 
@@ -153,19 +129,65 @@ Public Class Main_frm
 
 
 
+    'Private Sub ActBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ActBtn.Click
+
+    '    Dim Buffer(1) As Byte
+
+    '    If ActBox.SelectedIndex > -1 Then
+    '        Select Case ActBox.SelectedItem.ToString
+    '            Case "CTRL+A"
+    '                Buffer(0) = &H1
+    '            Case "CTRL+D"
+    '                Buffer(0) = &H4
+    '            Case "CTRL+E"
+    '                Buffer(0) = &H5
+    '            Case "CTRL+F"
+    '                Buffer(0) = &H6
+    '            Case "CTRL+I"
+    '                Buffer(0) = &H9
+    '            Case "CTRL+K"
+    '                Buffer(0) = &HB
+    '            Case "CTRL+Q"
+    '                Buffer(0) = &H11
+    '            Case "CTRL+R"
+    '                Buffer(0) = &H12
+    '            Case "CTRL+T"
+    '                Buffer(0) = &H14
+    '            Case "CTRL+S"
+    '                Buffer(0) = &H13
+    '            Case "CTRL+X"
+    '                Buffer(0) = &H18
+    '        End Select
+    '        SerialPort1.Write(Chr(Buffer(0)) + vbCr)
+    '        ActBox.SelectedIndex = -1
+    '    End If
+
+    '    ParamBtn.Enabled = False
+    '    ActBtn.Enabled = False
+    '    SendTxt.Text = ""
+    '    DescTxt.Text = ""
 
 
-    Private Sub Button3_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles ParamBtn.Click
+    'End Sub
 
-        SerialPort1.Write(Chr(27) + SendTxt.Text + vbCr)
+    'Private Sub ParamBtn_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles ParamBtn.Click
 
-    End Sub
+    '    SerialPort1.Write(Chr(27) + SendTxt.Text + vbCr)
+
+    '    ParamBox.SelectedIndex = -1
+    '    SendTxt.Text = ""
+    '    DescTxt.Text = ""
+
+    '    ParamBtn.Enabled = False
+    '    ActBtn.Enabled = False
+
+    'End Sub
 
 
 
 
 
-    Private Sub Button5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SavBtn.Click
+    Private Sub SavBtn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SavBtn.Click
 
 
 
@@ -189,7 +211,7 @@ Public Class Main_frm
             sw = My.Computer.FileSystem.OpenTextFileWriter(Path1, True)
         End If
         sw.WriteLine("@@@ Start to log temperature @@@")
-        sw.WriteLine("Time" & "," & "Channel" & "," & "T_data" & "," & "Unit")
+        sw.WriteLine("Time,| ,Channel#, T_data, Unit")
         'sw.Write(Me.RecTxt.Text)
         sw.Flush()
 
@@ -225,7 +247,7 @@ Public Class Main_frm
 
 
 
-    Private Sub ComboBox4_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles ParamBox.SelectionChangeCommitted
+    Private Sub ParamBox_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles ParamBox.SelectionChangeCommitted
         Dim description As String
 
 
@@ -247,12 +269,14 @@ Public Class Main_frm
                     description = "Capture User Data Sequence"
                 Case "HL"
                     description = "Set High Temperature Limit (obsolete, no longer supported)"
+                Case "ID"
+                    description = "Get the Device Info"
                 Case "LL"
                     description = "Set Low Temperature Limit (obsolete, no longer supported)"
                 Case "MU"
                     description = "Set Interval Between Temperature Measurement Reports" & Environment.NewLine & "1/MU = reporting frequency. Continuous 'C' mode reporting sets the reporting interval to the minimum practical value (4Hz). If 2 channels are active MU=C would yield 250mS * 2 = 0.5 S. Intervals: 0.25 - 600 S or 1 - 10 M."
                 Case "PS"
-                    description = "Specify Active-Input List" & Environment.NewLine & "PS = 1,2"
+                    description = "Set List of Active Channels" & Environment.NewLine & "PS = 1,2"
                 Case "SL"
                     description = "Report LED Light Source Intensity Level" & Environment.NewLine & "SL = 1: 1.81 %     2: 2.66 %"
                 Case "SM"
@@ -273,9 +297,12 @@ Public Class Main_frm
 
         End If
         ActBox.SelectedIndex = -1
+        send_idx = 1   ' 1 = Parameter Command
+        SendBtn.Enabled = True
+
     End Sub
 
-    Private Sub ComboBox3_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles ActBox.SelectionChangeCommitted
+    Private Sub ActBox_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles ActBox.SelectionChangeCommitted
         Dim description As String
 
 
@@ -308,10 +335,13 @@ Public Class Main_frm
             DescTxt.Text = description
         End If
         ParamBox.SelectedIndex = -1
+        send_idx = 2   ' 2 = Action Command
+        SendBtn.Enabled = True
+
     End Sub
 
 
-    Private Sub ComboBox1_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PortBox.SelectedIndexChanged
+    Private Sub PortBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PortBox.SelectedIndexChanged
         InitBtn.Enabled = True
     End Sub
 
@@ -319,5 +349,72 @@ Public Class Main_frm
         If (sw IsNot Nothing) Then
             sw.Close()
         End If
+    End Sub
+
+    Private Sub SendBtn_Click(sender As Object, e As EventArgs) Handles SendBtn.Click
+        If send_idx > -1 Then
+            HistBox.Enabled = True
+            Select Case send_idx
+                Case 1  ' Send the parameter command specified in Command to send textbox
+                    SerialPort1.Write(Chr(27) + SendTxt.Text + vbCr)
+                    ParamBox.SelectedIndex = -1
+
+                Case 2  ' Send the action command specified in Command to send textbox
+                    Dim Buffer(1) As Byte
+                    If ActBox.SelectedIndex > -1 Then
+                        Select Case ActBox.SelectedItem.ToString
+                            Case "CTRL+A"
+                                Buffer(0) = &H1
+                            Case "CTRL+D"
+                                Buffer(0) = &H4
+                            Case "CTRL+E"
+                                Buffer(0) = &H5
+                            Case "CTRL+F"
+                                Buffer(0) = &H6
+                            Case "CTRL+I"
+                                Buffer(0) = &H9
+                            Case "CTRL+K"
+                                Buffer(0) = &HB
+                            Case "CTRL+Q"
+                                Buffer(0) = &H11
+                            Case "CTRL+R"
+                                Buffer(0) = &H12
+                            Case "CTRL+T"
+                                Buffer(0) = &H14
+                            Case "CTRL+S"
+                                Buffer(0) = &H13
+                            Case "CTRL+X"
+                                Buffer(0) = &H18
+                        End Select
+                        SerialPort1.Write(Chr(Buffer(0)) + vbCr)
+                        ActBox.SelectedIndex = -1
+                    End If
+
+            End Select
+            HistBox.Items.Add(SendTxt.Text)
+            HistBox.SelectedIndex = -1
+            SendTxt.Text = ""
+            DescTxt.Text = ""
+            SendBtn.Enabled = False
+        End If
+    End Sub
+
+    Private Sub HistBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles HistBox.SelectedIndexChanged
+
+        SendTxt.Text = HistBox.SelectedItem
+
+
+
+        Dim FindAction As Integer = SendTxt.Text.IndexOf("CTRL+")
+  
+        If FindAction <> -1 Then
+            ActBox.SelectedItem = SendTxt.Text
+            ActBox_SelectionChangeCommitted(sender, e)
+        Else
+            send_idx = 1
+            SendBtn.Enabled = True
+        End If
+
+
     End Sub
 End Class
