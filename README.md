@@ -5,4 +5,6 @@ The software records real-time temperature data from fluoroptic sensor of Luxtro
 The sensor needs to be already connected to a com port (via serial to USB connector) before initialising the software.
 
 
-![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/UI_image2.png)
+![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/UI_image_01.png)
+
+![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/UI_image_02.png)
