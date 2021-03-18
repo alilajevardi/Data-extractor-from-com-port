@@ -8,3 +8,8 @@ The sensor needs to be already connected to a com port (via serial to USB connec
 ![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/UI_image_01.png)
 
 ![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/UI_image_02.png)
+
+
+![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/Action_Commands.png)
+
+![User Interface](https://github.com/alilajevardi/Data-extractor-from-com-port/blob/main/artifacts/Parameter_Commands.png)
